@@ -19,11 +19,9 @@
         <i class="fa-solid fa-boxes-stacked text-xl mb-1"></i>
         <span class="text-[10px] font-medium">อุปกรณ์</span>
     </a>
-    <a href="borrow.php" class="flex flex-col items-center justify-center w-full h-full text-gray-500 hover:text-primary transition-colors relative">
-        <div class="absolute -top-4 bg-primary text-white w-12 h-12 rounded-full flex items-center justify-center shadow-lg border-4 border-[#f8fafc]">
-            <i class="fa-solid fa-handshake text-xl mt-1"></i>
-        </div>
-        <span class="text-[10px] font-medium mt-6 text-primary">ยืม-คืน</span>
+    <a href="borrow.php" class="flex flex-col items-center justify-center w-full h-full text-gray-500 hover:text-primary transition-colors">
+        <i class="fa-solid fa-handshake text-xl mt-1"></i>
+        <span class="text-[10px] font-medium">ยืม-คืน</span>
     </a>
     <a href="history.php" class="flex flex-col items-center justify-center w-full h-full text-gray-500 hover:text-primary transition-colors">
         <i class="fa-solid fa-clock-rotate-left text-xl mb-1"></i>
@@ -42,6 +40,9 @@
 <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js"></script>
 <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.print.min.js"></script>
 
+<!-- Select2 -->
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
 <!-- SweetAlert2 for nice alerts -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
@@ -58,19 +59,38 @@ $.extend(true, $.fn.dataTable.defaults, {
         url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/th.json'
     },
     responsive: true,
-    dom: '<"flex flex-col md:flex-row justify-between items-center mb-4"l<"flex items-center gap-2"fB>>rt<"flex flex-col md:flex-row justify-between items-center mt-4"ip>',
-    buttons: [
-        {
-            extend: 'excelHtml5',
-            text: '<i class="fa-solid fa-file-excel mr-1"></i> Excel',
-            className: 'bg-green-600 hover:bg-green-700 text-white font-bold py-1 px-3 rounded shadow-sm transition-all focus:outline-none text-sm ml-2'
-        },
-        {
-            extend: 'print',
-            text: '<i class="fa-solid fa-print mr-1"></i> พิมพ์',
-            className: 'bg-gray-600 hover:bg-gray-700 text-white font-bold py-1 px-3 rounded shadow-sm transition-all focus:outline-none text-sm ml-2'
+    dom: '<"hidden"f>rt<"flex flex-col md:flex-row justify-between items-center mt-4"ip>'
+});
+</script>
+
+<script>
+// จัดการเปลี่ยนสี Active Menu (สีน้ำเงิน) แบบทำงานผ่าน JavaScript ป้องกันปัญหา Cache หรือ Path
+document.addEventListener('DOMContentLoaded', () => {
+    const currentPath = window.location.pathname.toLowerCase();
+    let activePage = 'index.php';
+    if (currentPath.includes('equipments')) activePage = 'equipments.php';
+    else if (currentPath.includes('borrow')) activePage = 'borrow.php';
+    else if (currentPath.includes('history')) activePage = 'history.php';
+
+    // เปลี่ยนสีเมนูด้านบน (Desktop)
+    document.querySelectorAll('.hidden.md\\:flex a').forEach(link => {
+        if (link.getAttribute('href') === activePage) {
+            // ลบคลาสสีเทาเดิมออก เพิ่มคลาสสีน้ำเงินและทำตัวหนา
+            link.classList.remove('text-gray-700', 'font-medium');
+            link.classList.add('text-blue-600', 'bg-blue-50', 'font-bold');
+            // บังคับสีป้องกัน Tailwind CDN โหลดไม่ทัน
+            link.style.color = '#2563eb'; 
         }
-    ]
+    });
+
+    // เปลี่ยนสีเมนูด้านล่าง (Mobile)
+    document.querySelectorAll('.md\\:hidden.fixed.bottom-0 a').forEach(link => {
+        if (link.getAttribute('href') === activePage) {
+            link.classList.remove('text-gray-500');
+            link.classList.add('text-blue-600', 'font-bold');
+            link.style.color = '#2563eb';
+        }
+    });
 });
 </script>
 

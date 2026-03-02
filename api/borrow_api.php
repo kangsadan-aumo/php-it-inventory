@@ -105,9 +105,17 @@ switch ($action) {
             // เตรียม transaction
             $pdo->beginTransaction();
 
+            $return_date = trim($_POST['return_date'] ?? '');
+
             // Update สถานะการยืมเป็น returned พร้อมระบุเวลาคืน
-            $stmtBorrow = $pdo->prepare("UPDATE borrowings SET status = 'returned', return_date = NOW() WHERE equipment_id = ? AND status = 'active'");
-            $stmtBorrow->execute([$equipment_id]);
+            if (!empty($return_date)) {
+                $stmtBorrow = $pdo->prepare("UPDATE borrowings SET status = 'returned', return_date = ? WHERE equipment_id = ? AND status = 'active'");
+                $stmtBorrow->execute([$return_date, $equipment_id]);
+            }
+            else {
+                $stmtBorrow = $pdo->prepare("UPDATE borrowings SET status = 'returned', return_date = NOW() WHERE equipment_id = ? AND status = 'active'");
+                $stmtBorrow->execute([$equipment_id]);
+            }
 
             // Update อุปกรณ์ให้พร้อมใช้งาน
             $stmtUpdate = $pdo->prepare("UPDATE equipments SET status = 'available' WHERE id = ?");

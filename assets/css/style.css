@@ -25,7 +25,8 @@ table.dataTable.no-footer {
     border-bottom: 1px solid #e5e7eb;
 }
 
-table.dataTable thead th, table.dataTable thead td {
+table.dataTable thead th,
+table.dataTable thead td {
     border-bottom: 2px solid #e5e7eb;
 }
 
@@ -38,7 +39,7 @@ table.dataTable thead th, table.dataTable thead td {
     transition: all 0.2s;
 }
 
-.dataTables_wrapper .dataTables_paginate .paginate_button.current, 
+.dataTables_wrapper .dataTables_paginate .paginate_button.current,
 .dataTables_wrapper .dataTables_paginate .paginate_button.current:hover {
     background: #3b82f6 !important;
     color: white !important;
@@ -62,7 +63,7 @@ table.dataTable thead th, table.dataTable thead td {
 /* Interactive Hover Rows สำหรับตาราง */
 .hover-table-row:hover {
     transform: scale(1.01);
-    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
     z-index: 10;
     position: relative;
     background-color: #f8fafc;
@@ -78,6 +79,7 @@ table.dataTable thead th, table.dataTable thead td {
     overflow: hidden;
     box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.06);
 }
+
 #reader video {
     border-radius: 0.5rem;
 }

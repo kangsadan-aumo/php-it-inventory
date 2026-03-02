@@ -20,6 +20,21 @@ switch ($action) {
         }
         break;
 
+    case 'get_brands':
+        // ดึงรายชื่อยี่ห้อ (Brand) ที่เคยบันทึกไว้สำหรับ Auto-complete 
+        try {
+            $type = $_GET['type'] ?? 'Monitor'; // ค่าเริ่มต้นเป็น Monitor ตามโจทย์
+            // Query แบบ Distinct เพื่อไม่ให้ยี่ห้อซ้ำกัน
+            $stmt = $pdo->prepare("SELECT DISTINCT brand FROM equipments WHERE type = ? AND brand IS NOT NULL AND brand != '' ORDER BY brand ASC");
+            $stmt->execute([$type]);
+            $brands = $stmt->fetchAll(PDO::FETCH_COLUMN); // ดึงมาเฉพาะ column brand เป็น array เพียวๆ
+            responseJson('success', 'Brands retrieved', $brands);
+        }
+        catch (Exception $e) {
+            responseJson('error', $e->getMessage());
+        }
+        break;
+
     case 'add':
         // เพิ่มอุปกรณ์ใหม่
         try {
@@ -37,8 +52,8 @@ switch ($action) {
                 responseJson('error', 'บาร์โค้ดนี้มีอยู่ในระบบแล้ว');
             }
 
-            $sql = "INSERT INTO equipments (barcode, serial_number, type, brand, model, cpu_gen, ram_gb, storage_type, storage_gb, os, status) 
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            $sql = "INSERT INTO equipments (barcode, serial_number, type, brand, model, cpu_gen, ram_gb, storage_type, storage_gb, os, location, status) 
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             $stmt = $pdo->prepare($sql);
             $stmt->execute([
                 $barcode,
@@ -51,10 +66,80 @@ switch ($action) {
                 $_POST['storage_type'] ?? null,
                 !empty($_POST['storage_gb']) ? $_POST['storage_gb'] : null,
                 $_POST['os'] ?? null,
+                $_POST['location'] ?? null,
                 $_POST['status'] ?? 'available'
             ]);
 
             responseJson('success', 'เพิ่มอุปกรณ์สำเร็จ');
+        }
+        catch (Exception $e) {
+            responseJson('error', 'เกิดข้อผิดพลาด: ' . $e->getMessage());
+        }
+        break;
+
+    case 'get_single':
+        // ดึงข้อมูลอุปกรณ์ชิ้นเดียวเพื่อไปแสดงใน Form Edit
+        try {
+            $id = $_GET['id'] ?? 0;
+            if (empty($id)) {
+                responseJson('error', 'ไม่พบรหัสอุปกรณ์');
+            }
+            $stmt = $pdo->prepare("SELECT * FROM equipments WHERE id = ?");
+            $stmt->execute([$id]);
+            $item = $stmt->fetch();
+            if ($item) {
+                responseJson('success', 'Data retrieved', $item);
+            }
+            else {
+                responseJson('error', 'ไม่พบข้อมูลอุปกรณ์นี้');
+            }
+        }
+        catch (Exception $e) {
+            responseJson('error', $e->getMessage());
+        }
+        break;
+
+    case 'update':
+        // แก้ไขข้อมูลอุปกรณ์
+        try {
+            $id = $_POST['id'] ?? 0;
+            $barcode = trim($_POST['barcode'] ?? '');
+            $type = trim($_POST['type'] ?? '');
+            $status = $_POST['status'] ?? 'available';
+
+            if (empty($id) || empty($barcode) || empty($type)) {
+                responseJson('error', 'โปรดกรอกบาร์โค้ดและประเภทอุปกรณ์');
+            }
+
+            // เช็คบาร์โค้ดซ้ำ (ยกเว้นตัวเอง)
+            $stmtCheck = $pdo->prepare("SELECT id FROM equipments WHERE barcode = ? AND id != ?");
+            $stmtCheck->execute([$barcode, $id]);
+            if ($stmtCheck->rowCount() > 0) {
+                responseJson('error', 'บาร์โค้ดนี้มีอยู่ในระบบแล้ว');
+            }
+
+            $sql = "UPDATE equipments SET 
+                    barcode=?, serial_number=?, type=?, brand=?, model=?, 
+                    cpu_gen=?, ram_gb=?, storage_type=?, storage_gb=?, os=?, location=?, status=?
+                    WHERE id=?";
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute([
+                $barcode,
+                $_POST['serial_number'] ?? null,
+                $type,
+                $_POST['brand'] ?? null,
+                $_POST['model'] ?? null,
+                $_POST['cpu_gen'] ?? null,
+                !empty($_POST['ram_gb']) ? $_POST['ram_gb'] : null,
+                $_POST['storage_type'] ?? null,
+                !empty($_POST['storage_gb']) ? $_POST['storage_gb'] : null,
+                $_POST['os'] ?? null,
+                $_POST['location'] ?? null,
+                $status,
+                $id
+            ]);
+
+            responseJson('success', 'อัปเดตข้อมูลอุปกรณ์สำเร็จ');
         }
         catch (Exception $e) {
             responseJson('error', 'เกิดข้อผิดพลาด: ' . $e->getMessage());

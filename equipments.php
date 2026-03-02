@@ -1,25 +1,39 @@
 <?php require_once 'includes/header.php'; ?>
 
-<div class="mb-6 flex flex-col md:flex-row md:justify-between md:items-center gap-4 animate__animated animate__fadeInDown">
-    <div>
-        <h1 class="text-3xl font-extrabold text-gray-800">จัดการอุปกรณ์ IT <i class="fa-solid fa-laptop-code text-primary"></i></h1>
-        <p class="text-gray-500 mt-1">เพิ่ม ลบ แก้ไข ข้อมูลสเปค และบาร์โค้ดอุปกรณ์</p>
+<div class="mb-4 animate__animated animate__fadeInDown">
+    <h1 class="text-3xl font-extrabold text-gray-800">จัดการอุปกรณ์ IT <i class="fa-solid fa-laptop-code flex-primary"></i></h1>
+    <p class="text-gray-500 mt-1">เพิ่ม ลบ แก้ไข ข้อมูลสเปค และบาร์โค้ดอุปกรณ์</p>
+</div>
+
+<!-- Control Panel (ตรึงด้านบนเวลาเลื่อน) -->
+<div class="sticky top-[64px] z-40 bg-white/95 backdrop-blur-md rounded-xl shadow-[0_4px_10px_rgba(0,0,0,0.05)] border border-gray-200 p-4 mb-4 transform transition-all">
+    <div class="flex flex-row items-end gap-2">
+        <!-- ช่องค้นหา -->
+        <div class="flex-grow">
+            <label class="block text-xs font-bold text-gray-700 mb-1">ค้นหา</label>
+            <input type="text" id="customSearch" class="w-full border-gray-300 rounded-md shadow-sm focus:ring-primary focus:border-primary text-sm p-2 border outline-none" placeholder="...">
+        </div>
+        <!-- ปุ่ม Excel -->
+        <button id="customExcel" class="shrink-0 bg-gray-100 hover:bg-gray-200 border border-gray-300 text-gray-700 rounded-md shadow-sm transition-all focus:outline-none flex items-center justify-center w-[42px] h-[38px]" title="ส่งออก Excel">
+            <i class="fa-solid fa-file-excel text-lg text-green-600"></i>
+        </button>
+        <!-- ปุ่มเพิ่มอุปกรณ์ -->
+        <button onclick="openAddModal()" class="shrink-0 bg-primary hover:bg-secondary text-white font-bold px-3 rounded-md shadow-sm transition-all focus:outline-none flex items-center justify-center gap-1 h-[38px]">
+            <i class="fa-solid fa-plus"></i> <span class="text-sm">เพิ่มอุปกรณ์</span>
+        </button>
     </div>
-    <button onclick="openAddModal()" class="bg-primary hover:bg-secondary text-white font-bold py-2 px-4 rounded-lg shadow-md transition-all flex items-center gap-2">
-        <i class="fa-solid fa-plus"></i> เพิ่มอุปกรณ์ใหม่
-    </button>
 </div>
 
 <!-- ตารางแสดงอุปกรณ์ (ใช้งาน DataTables แบบ Responsive) -->
-<div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 animate__animated animate__fadeInUp">
-    <table id="equipmentTable" class="w-full text-left" style="width:100%">
+<div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 relative z-10 animate__animated animate__fadeInUp overflow-hidden">
+    <table id="equipmentTable" class="w-full text-left whitespace-nowrap" style="width:100%">
         <thead class="bg-gray-50 text-gray-700">
             <tr>
                 <th class="py-2 px-3">บาร์โค้ด</th>
                 <th class="py-2 px-3">ประเภท</th>
-                <th class="py-2 px-3">ยี่ห้อ/รุ่น</th>
-                <th class="py-2 px-3">สเปคหลัก (CPU/RAM/Storage)</th>
-                <th class="py-2 px-3">หมายเลขซีเรียลหน้าจอ</th>
+                <th class="py-2 px-3">ยี่ห้อ</th>
+                <th class="py-2 px-3">สเปค</th>
+                <th class="py-2 px-3">Serial No.</th>
                 <th class="py-2 px-3">สถานะ</th>
                 <th class="py-2 px-3 text-center">จัดการ</th>
             </tr>
@@ -32,13 +46,13 @@
 
 <!-- Modal เพิ่มอุปกรณ์ -->
 <div id="addModal" class="hidden fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
-    <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+    <div class="flex justify-center min-h-screen pt-10 px-4 pb-24 text-center items-start md:items-center sm:p-0">
         <!-- Background Overlay -->
         <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true" onclick="closeAddModal()"></div>
         <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
         
         <!-- Modal Panel -->
-        <div class="inline-block align-bottom bg-white rounded-xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-2xl sm:w-full animate__animated animate__zoomIn">
+        <div class="inline-block bg-white rounded-xl text-left shadow-xl transform transition-all my-8 sm:align-middle sm:max-w-2xl w-full animate__animated animate__zoomIn">
             <form id="addEqForm">
                 <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
                     <h3 class="text-lg leading-6 font-bold text-gray-900 mb-4 border-b pb-2"><i class="fa-solid fa-desktop text-primary"></i> ข้อมูลอุปกรณ์ใหม่</h3>
@@ -55,23 +69,30 @@
                                 <option value="PC">PC (คอมพิวเตอร์ตั้งโต๊ะ)</option>
                                 <option value="Notebook">Notebook (แล็ปท็อป)</option>
                                 <option value="Monitor">Monitor (หน้าจอ)</option>
+                                <option value="Printer">Printer (เครื่องพิมพ์)</option>
                                 <option value="Tablet">Tablet</option>
                                 <option value="Other">อื่นๆ</option>
                             </select>
                         </div>
-                        <div>
+                        <div id="brandGroup">
                             <label class="block text-sm font-medium text-gray-700 mb-1" id="brandLabel">ยี่ห้อ (Brand)</label>
-                            <input type="text" name="brand" class="w-full border-gray-300 rounded-md shadow-sm focus:ring-primary focus:border-primary sm:text-sm p-2 border" placeholder="เช่น DELL, HP, Lenovo">
+                            <input type="text" name="brand" list="monitorBrands" class="w-full border-gray-300 rounded-md shadow-sm focus:ring-primary focus:border-primary sm:text-sm p-2 border" placeholder="เช่น DELL, HP, Lenovo">
                         </div>
-                        <div>
+                        <div id="modelGroup">
                             <label class="block text-sm font-medium text-gray-700 mb-1" id="modelLabel">รุ่น (Model)</label>
                             <input type="text" name="model" class="w-full border-gray-300 rounded-md shadow-sm focus:ring-primary focus:border-primary sm:text-sm p-2 border" placeholder="เช่น OptiPlex 7090">
                         </div>
                         
                         <!-- Serial Group -->
                         <div id="serialNumGroup" class="md:col-span-2 hidden">
-                            <label class="block text-sm font-medium text-gray-700 mb-1">หมายเลขซีเรียล (Serial Number)</label>
-                            <input type="text" name="serial_number" class="w-full border-gray-300 rounded-md shadow-sm focus:ring-primary focus:border-primary sm:text-sm p-2 border" placeholder="เพื่อระบุหน้าจอแยกกัน">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Serial No.</label>
+                            <input type="text" name="serial_number" class="w-full border-gray-300 rounded-md shadow-sm focus:ring-primary focus:border-primary sm:text-sm p-2 border" placeholder="-">
+                        </div>
+
+                        <!-- Location Group -->
+                        <div id="locationGroup" class="md:col-span-2 hidden">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">ห้องที่ตั้ง (Location)</label>
+                            <input type="text" name="location" class="w-full border-gray-300 rounded-md shadow-sm focus:ring-primary focus:border-primary sm:text-sm p-2 border" placeholder="เช่น ห้องHR, ห้องบัญชี">
                         </div>
 
                         <!-- PC Specs Group -->
@@ -121,13 +142,120 @@
     </div>
 </div>
 
+<!-- Modal แก้ไขอุปกรณ์ -->
+<div id="editModal" class="hidden fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+    <div class="flex justify-center min-h-screen pt-10 px-4 pb-24 text-center items-start md:items-center sm:p-0">
+        <!-- Background Overlay -->
+        <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true" onclick="closeEditModal()"></div>
+        <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+        
+        <!-- Modal Panel -->
+        <div class="inline-block bg-white rounded-xl text-left shadow-xl transform transition-all my-8 sm:align-middle sm:max-w-2xl w-full animate__animated animate__zoomIn">
+            <form id="editEqForm">
+                <input type="hidden" name="id" id="edit_id">
+                <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                    <h3 class="text-lg leading-6 font-bold text-gray-900 mb-4 border-b pb-2"><i class="fa-solid fa-pen-to-square text-blue-500"></i> แก้ไขข้อมูลและสถานะอุปกรณ์</h3>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">รหัสบาร์โค้ด <span class="text-red-500">*</span></label>
+                            <input type="text" name="barcode" id="edit_barcode" required class="w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm p-2 border bg-gray-50">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">ประเภทอุปกรณ์ <span class="text-red-500">*</span></label>
+                            <select name="type" id="edit_type" onchange="toggleEditEqFields()" required class="w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm p-2 border bg-gray-50 pointer-events-none">
+                                <option value="PC">PC (คอมพิวเตอร์ตั้งโต๊ะ)</option>
+                                <option value="Notebook">Notebook (แล็ปท็อป)</option>
+                                <option value="Monitor">Monitor (หน้าจอ)</option>
+                                <option value="Printer">Printer (เครื่องพิมพ์)</option>
+                                <option value="Tablet">Tablet</option>
+                                <option value="Other">อื่นๆ</option>
+                            </select>
+                        </div>
+                        <div id="editBrandGroup">
+                            <label class="block text-sm font-medium text-gray-700 mb-1" id="editBrandLabel">ยี่ห้อ (Brand)</label>
+                            <input type="text" name="brand" id="edit_brand" list="monitorBrands" class="w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm p-2 border">
+                        </div>
+                        <div id="editModelGroup">
+                            <label class="block text-sm font-medium text-gray-700 mb-1" id="editModelLabel">รุ่น (Model)</label>
+                            <input type="text" name="model" id="edit_model" class="w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm p-2 border">
+                        </div>
+                        
+                        <!-- Serial Group -->
+                        <div id="editSerialNumGroup" class="md:col-span-2 hidden">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Serial No.</label>
+                            <input type="text" name="serial_number" id="edit_serial_number" class="w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm p-2 border">
+                        </div>
+
+                        <!-- Location Group -->
+                        <div id="editLocationGroup" class="md:col-span-2 hidden">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">ห้องที่ตั้ง (Location)</label>
+                            <input type="text" name="location" id="edit_location" class="w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm p-2 border">
+                        </div>
+
+                        <!-- PC Specs Group -->
+                        <div id="editPcSpecsGroup" class="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">CPU (Gen)</label>
+                                <input type="text" name="cpu_gen" id="edit_cpu_gen" class="w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm p-2 border">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">RAM (GB)</label>
+                                <input type="number" name="ram_gb" id="edit_ram_gb" class="w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm p-2 border">
+                            </div>
+                            <div class="grid grid-cols-2 gap-2">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Storage Type</label>
+                                    <select name="storage_type" id="edit_storage_type" class="w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm p-2 border">
+                                        <option value="SSD">SSD</option>
+                                        <option value="M.2">M.2</option>
+                                        <option value="HDD">HDD</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">ความจุ (GB)</label>
+                                    <input type="number" name="storage_gb" id="edit_storage_gb" class="w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm p-2 border">
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">OS (ระบบปฏิบัติการ)</label>
+                                <input type="text" name="os" id="edit_os" class="w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm p-2 border">
+                            </div>
+                        </div>
+
+                        <!-- Status Selection -->
+                        <div class="md:col-span-2 mt-2 pt-2 border-t">
+                            <label class="block text-sm font-bold text-gray-900 mb-2">สถานะปัจจุบัน <span class="text-red-500">*</span></label>
+                            <select name="status" id="edit_status" required class="w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm p-2 border font-medium">
+                                <option value="available" class="text-green-600">พร้อมใช้งาน</option>
+                                <option value="maintenance" class="text-orange-600">ส่งซ่อม / บำรุงรักษา</option>
+                                <option value="broken" class="text-red-600">ชำรุด / พัง</option>
+                            </select>
+                            <p class="text-xs text-gray-500 mt-1" id="edit_status_help"><i class="fa-solid fa-circle-info"></i> เลือกสถานะของอุปกรณ์เพื่อให้ตรงกับความเป็นจริง</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- ปุ่มกดยืนยัน -->
+                <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse border-t">
+                    <button type="submit" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none sm:ml-3 sm:w-auto sm:text-sm transition-colors">
+                        <i class="fa-solid fa-save mr-2 mt-1"></i> บันทึกการแก้ไข
+                    </button>
+                    <button type="button" onclick="closeEditModal()" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm transition-colors">
+                        ยกเลิก
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 <!-- Modal ประวัติการยืมอุปกรณ์ -->
 <div id="eqHistoryModal" class="hidden fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
-    <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+    <div class="flex justify-center min-h-screen pt-10 px-4 pb-24 text-center items-start md:items-center sm:p-0">
         <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true" onclick="closeEqHistoryModal()"></div>
         <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
         
-        <div class="inline-block align-bottom bg-white rounded-xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-3xl sm:w-full animate__animated animate__zoomIn">
+        <div class="inline-block bg-white rounded-xl text-left shadow-xl transform transition-all my-8 sm:align-middle sm:max-w-3xl w-full animate__animated animate__zoomIn">
             <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
                 <div class="flex justify-between items-center mb-4 border-b pb-2">
                     <h3 class="text-xl leading-6 font-bold text-gray-900 border-l-4 border-primary pl-2"><i class="fa-solid fa-clock-rotate-left text-gray-400"></i> ประวัติการยืม: <span id="modal_eq_barcode" class="text-primary"></span></h3>
@@ -160,11 +288,14 @@
     </div>
 </div>
 
+<datalist id="monitorBrands"></datalist>
+
 <script>
 let dataTable;
 
 document.addEventListener('DOMContentLoaded', () => {
     loadEquipments();
+    loadMonitorBrands();
 
     // ดักจับการ Submit form
     document.getElementById('addEqForm').addEventListener('submit', function(e) {
@@ -189,6 +320,38 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
                 closeAddModal();
                 loadEquipments(); // โหลดข้อมูลใหม่
+                loadMonitorBrands(); // อัพเดทยี่ห้อใหม่ (ถ้ามี)
+            } else {
+                Swal.fire('ข้อผิดพลาด', res.message, 'error');
+            }
+        })
+        .catch(err => console.error(err));
+    });
+
+    // ดักจับการ Submit form ลำหรับแก้ไข
+    document.getElementById('editEqForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        let fd = new FormData(this);
+        fd.append('action', 'update');
+
+        fetch('api/equipment_api.php', {
+            method: 'POST',
+            body: fd
+        })
+        .then(res => res.json())
+        .then(res => {
+            if(res.status === 'success') {
+                Swal.fire({
+                    title: 'บันทึกสำเร็จ!',
+                    text: res.message,
+                    icon: 'success',
+                    timer: 1500,
+                    showConfirmButton: false
+                });
+                closeEditModal();
+                loadEquipments(); // โหลดข้อมูลใหม่
+                loadMonitorBrands(); // อัพเดทยี่ห้อใหม่ (ถ้ามี)
             } else {
                 Swal.fire('ข้อผิดพลาด', res.message, 'error');
             }
@@ -224,78 +387,211 @@ function loadEquipments() {
                         statusBadge = `<div class="flex items-center justify-center" title="${item.status}"><span class="w-4 h-4 rounded-full bg-gray-500 shadow-sm"></span></div>`;
                     }
 
-                    // แปลงสเปคเครื่องเป็นรายละเอียดรวมกัน
                     let specs = [];
                     if(item.cpu_gen) specs.push(item.cpu_gen);
                     if(item.ram_gb) specs.push(`RAM ${item.ram_gb}GB`);
                     if(item.storage_type && item.storage_gb) specs.push(`${item.storage_type} ${item.storage_gb}GB`);
+                    if(item.type === 'Printer' && item.location) specs.push(`ที่ตั้ง: ${item.location}`);
                     let sp_str = specs.join(' / ') || '-';
+                    
+                    // จัดการชื่อยี่ห้อและรุ่น ไม่ให้มีขีด (-) โผล่มาถ้ายี่ห้อว่างเปล่า
+                    let brandModelText = [item.brand, item.model].filter(Boolean).join(' ') || '-';
 
                     let tr = document.createElement('tr');
                     tr.className = 'hover-table-row';
                     
-                    // ปุ่มเลือกสถานะ (เฉพาะตอนว่าง หรือ เสีย/ซ่อม)
-                    let statusAction = '';
-                    if(item.status !== 'borrowed') {
-                        statusAction = `
-                            <select onchange="updateEqStatus(${item.id}, this.value)" class="text-xs border rounded p-1 text-gray-600 bg-gray-50 hover:bg-white transition-colors">
-                                <option value="" disabled selected>เปลี่ยนสถานะ</option>
-                                <option value="available" ${item.status==='available'?'disabled':''}>พร้อมใช้งาน</option>
-                                <option value="maintenance" ${item.status==='maintenance'?'disabled':''}>ส่งซ่อม</option>
-                                <option value="broken" ${item.status==='broken'?'disabled':''}>ชำรุด/พัง</option>
-                            </select>
-                        `;
-                    } else {
-                        statusAction = `<span class="text-xs text-gray-400 italic">ยืมอยู่</span>`;
+                    // ปุ่มเลือกการแก้ไข 
+                    let statusAction = `
+                        <button onclick="openEditModal(${item.id})" class="text-blue-500 hover:text-blue-700 p-1.5 rounded transition-colors text-lg" title="แก้ไขข้อมูล/สถานะ">
+                            <i class="fa-regular fa-pen-to-square"></i>
+                        </button>
+                    `;
+                    
+                    if (item.status === 'borrowed') {
+                        statusAction = `<span class="text-xs text-gray-400 italic mr-2">ยืมอยู่</span>`;
                     }
                     tr.innerHTML = `
                         <td class="py-2 px-3 font-mono text-blue-600 font-medium cursor-pointer hover:underline" onclick="openEqHistoryModal(${item.id}, '${item.barcode}')" title="คลิกดูประวัติการยืม">
                             ${item.barcode} <i class="fa-solid fa-circle-info text-xs text-blue-300 ml-1"></i>
                         </td>
                         <td class="py-2 px-3">${item.type}</td>
-                        <td class="py-2 px-3">${item.brand || '-'} ${item.model || ''}</td>
+                        <td class="py-2 px-3">${brandModelText}</td>
                         <td class="py-2 px-3 text-xs text-gray-500">${sp_str}</td>
                         <td class="py-2 px-3 text-xs font-mono text-gray-600">${item.serial_number || '-'}</td>
                         <td class="py-2 px-3">${statusBadge}</td>
                         <td class="py-2 px-3 text-center flex items-center justify-center gap-2">
                             ${statusAction}
-                            <button onclick="deleteEquipment(${item.id})" class="text-red-500 hover:text-red-700 hover:bg-red-50 p-1.5 rounded transition-colors" title="ลบข้อมูล">
-                                <i class="fa-solid fa-trash"></i>
+                            <button onclick="deleteEquipment(${item.id})" class="text-red-500 hover:text-red-700 p-1.5 rounded transition-colors text-lg" title="ลบข้อมูล">
+                                <i class="fa-solid fa-trash-can"></i>
                             </button>
                         </td>
                     `;
                     tbody.appendChild(tr);
                 });
 
-                // เรียกใช้ DataTables พร้อม Excel Export
+                // เรียกใช้ DataTables แบบซ่อน Component เริ่มต้นไว้
                 dataTable = $('#equipmentTable').DataTable({
-                    // ใช้ default ที่ตั้งไว้ใน footer (ภาษาไทย + ปุ่ม Print/Excel)
+                    responsive: true,
+                    // B: Buttons (ซ่อน), r: processing, t: table, i: info, p: paging
+                    dom: '<"hidden"B>rt<"flex flex-col md:flex-row justify-between items-center mt-4 text-sm"ip>',
+                    buttons: [
+                        {
+                            extend: 'excelHtml5',
+                            className: 'custom-excel-dt', // ซ่อนปุ่มจริงไว้
+                            exportOptions: {
+                                columns: [0, 1, 2, 3, 4, 5], // ไม่เอาคอลัมน์ "จัดการ" และบังคับโหลดทุกคอลัมน์ไม่ว่าจะถูกซ่อนในมือถือหรือไม่
+                                format: {
+                                    body: function(data, row, column, node) {
+                                        // สำหรับคอลัมน์ บาร์โค้ด ที่มีไอคอน info, และคอลัมน์สถานะ ให้ตัด HTML ออกให้หมด
+                                        if (column === 5) { // Status column
+                                            let temp = document.createElement('div');
+                                            temp.innerHTML = data;
+                                            return temp.innerText || temp.getAttribute('title') || temp.querySelector('div').getAttribute('title') || 'ไม่ทราบสถานะ';
+                                        }
+                                        return data.replace(/<[^>]*>?/gm, '').replace(/&nbsp;/g, ' ').trim();
+                                    }
+                                }
+                            }
+                        }
+                    ]
+                });
+
+                // เชื่อมช่องค้นหา Control Panel เข้ากับ DataTables
+                $('#customSearch').off('keyup').on('keyup', function() {
+                    dataTable.search(this.value).draw();
+                });
+
+                // เชื่อมปุ่ม Excel Control Panel เข้ากับ DataTables
+                $('#customExcel').off('click').on('click', function() {
+                    $('.custom-excel-dt').click();
+                });
+
+                // บังคับให้ตารางคำนวณขนาดและจัดคอลัมน์ใหม่เมื่อย่อ/ขยายหน้าจอ
+                $(window).on('resize', function() {
+                    if (dataTable) {
+                        dataTable.columns.adjust().responsive.recalc();
+                    }
                 });
             }
         });
 }
 
+function loadMonitorBrands() {
+    fetch('api/equipment_api.php?action=get_brands&type=Monitor')
+        .then(res => res.json())
+        .then(res => {
+            if(res.status === 'success') {
+                let datalist = document.getElementById('monitorBrands');
+                datalist.innerHTML = '';
+                res.data.forEach(brand => {
+                    let option = document.createElement('option');
+                    option.value = brand;
+                    datalist.appendChild(option);
+                });
+            }
+        })
+        .catch(err => console.error('Error loading brands:', err));
+}
+
 function toggleEqFields() {
     let type = document.getElementById('eqTypeSelect').value;
     let serialGrp = document.getElementById('serialNumGroup');
+    let locationGrp = document.getElementById('locationGroup');
     let pcGrp = document.getElementById('pcSpecsGroup');
+    let modelGrp = document.getElementById('modelGroup');
     let modelLabel = document.getElementById('modelLabel');
+    let brandGrp = document.getElementById('brandGroup');
     let brandLabel = document.getElementById('brandLabel');
 
-    if(type === 'Monitor') {
+    if (type === 'Monitor') {
         serialGrp.classList.remove('hidden');
+        locationGrp.classList.add('hidden');
         pcGrp.classList.add('hidden');
+        brandGrp.classList.remove('hidden');
+        modelGrp.classList.remove('hidden');
         modelLabel.innerText = 'รุ่น / ขนาดจอ';
         brandLabel.innerText = 'ยี่ห้อ (Brand)';
     } else if (type === 'PC') {
         serialGrp.classList.add('hidden');
+        locationGrp.classList.add('hidden');
         pcGrp.classList.remove('hidden');
-        modelLabel.innerText = 'หมายเลขประจำอุปกรณ์ (เช่น DESKTOP-XXXX)';
-        brandLabel.innerText = 'ชื่อเครื่อง (Computer Name)';
+        brandGrp.classList.add('hidden');
+        modelGrp.classList.remove('hidden');
+        modelLabel.innerText = 'ชื่อประจำอุปกรณ์ (Computer Name)';
+    } else if (type === 'Notebook') {
+        serialGrp.classList.remove('hidden');
+        locationGrp.classList.add('hidden');
+        pcGrp.classList.remove('hidden');
+        brandGrp.classList.remove('hidden');
+        modelGrp.classList.remove('hidden');
+        modelLabel.innerText = 'รุ่น (Model)';
+        brandLabel.innerText = 'ยี่ห้อ (Brand)';
+    } else if (type === 'Printer') {
+        serialGrp.classList.remove('hidden');
+        locationGrp.classList.remove('hidden');
+        pcGrp.classList.add('hidden');
+        brandGrp.classList.remove('hidden');
+        modelGrp.classList.add('hidden');
+        brandLabel.innerText = 'ยี่ห้อ (Brand)';
     } else {
-        // Notebook, Tablet, Other
+        // Tablet, Other
         serialGrp.classList.add('hidden');
+        locationGrp.classList.add('hidden');
         pcGrp.classList.remove('hidden');
+        brandGrp.classList.remove('hidden');
+        modelGrp.classList.remove('hidden');
+        modelLabel.innerText = 'รุ่น (Model)';
+        brandLabel.innerText = 'ยี่ห้อ (Brand)';
+    }
+}
+
+function toggleEditEqFields() {
+    let type = document.getElementById('edit_type').value;
+    let serialGrp = document.getElementById('editSerialNumGroup');
+    let locationGrp = document.getElementById('editLocationGroup');
+    let pcGrp = document.getElementById('editPcSpecsGroup');
+    let modelGrp = document.getElementById('editModelGroup');
+    let modelLabel = document.getElementById('editModelLabel');
+    let brandGrp = document.getElementById('editBrandGroup');
+    let brandLabel = document.getElementById('editBrandLabel');
+
+    if (type === 'Monitor') {
+        serialGrp.classList.remove('hidden');
+        locationGrp.classList.add('hidden');
+        pcGrp.classList.add('hidden');
+        brandGrp.classList.remove('hidden');
+        modelGrp.classList.remove('hidden');
+        modelLabel.innerText = 'รุ่น / ขนาดจอ';
+        brandLabel.innerText = 'ยี่ห้อ (Brand)';
+    } else if (type === 'PC') {
+        serialGrp.classList.add('hidden');
+        locationGrp.classList.add('hidden');
+        pcGrp.classList.remove('hidden');
+        brandGrp.classList.add('hidden');
+        modelGrp.classList.remove('hidden');
+        modelLabel.innerText = 'ชื่อประจำอุปกรณ์ (Computer Name)';
+    } else if (type === 'Notebook') {
+        serialGrp.classList.remove('hidden');
+        locationGrp.classList.add('hidden');
+        pcGrp.classList.remove('hidden');
+        brandGrp.classList.remove('hidden');
+        modelGrp.classList.remove('hidden');
+        modelLabel.innerText = 'รุ่น (Model)';
+        brandLabel.innerText = 'ยี่ห้อ (Brand)';
+    } else if (type === 'Printer') {
+        serialGrp.classList.remove('hidden');
+        locationGrp.classList.remove('hidden');
+        pcGrp.classList.add('hidden');
+        brandGrp.classList.remove('hidden');
+        modelGrp.classList.add('hidden');
+        brandLabel.innerText = 'ยี่ห้อ (Brand)';
+    } else {
+        // Tablet, Other
+        serialGrp.classList.add('hidden');
+        locationGrp.classList.add('hidden');
+        pcGrp.classList.remove('hidden');
+        brandGrp.classList.remove('hidden');
+        modelGrp.classList.remove('hidden');
         modelLabel.innerText = 'รุ่น (Model)';
         brandLabel.innerText = 'ยี่ห้อ (Brand)';
     }
@@ -309,6 +605,68 @@ function openAddModal() {
 
 function closeAddModal() {
     document.getElementById('addModal').classList.add('hidden');
+}
+
+function openEditModal(id) {
+    if (!id) return;
+
+    fetch(`api/equipment_api.php?action=get_single&id=${id}`)
+    .then(res => res.json())
+    .then(res => {
+        if (res.status === 'success') {
+            let item = res.data;
+
+            document.getElementById('edit_id').value = item.id;
+            document.getElementById('edit_barcode').value = item.barcode;
+            document.getElementById('edit_type').value = item.type;
+            document.getElementById('edit_brand').value = item.brand || '';
+            document.getElementById('edit_model').value = item.model || '';
+            document.getElementById('edit_serial_number').value = item.serial_number || '';
+            document.getElementById('edit_location').value = item.location || '';
+            document.getElementById('edit_cpu_gen').value = item.cpu_gen || '';
+            document.getElementById('edit_ram_gb').value = item.ram_gb || '';
+            document.getElementById('edit_storage_type').value = item.storage_type || 'SSD';
+            document.getElementById('edit_storage_gb').value = item.storage_gb || '';
+            document.getElementById('edit_os').value = item.os || '';
+            
+            // Set Status
+            let statusEl = document.getElementById('edit_status');
+            statusEl.value = item.status || 'available';
+
+            // ถ้าเครื่องถูกยืมอยู่ ห้ามเปลี่ยนสถานะผ่านหน้านี้ ป้องกันบัค
+            if (item.status === 'borrowed') {
+                statusEl.innerHTML = '<option value="borrowed" selected class="text-yellow-600">กำลังถูกยืม</option>';
+                statusEl.classList.add('bg-gray-100', 'pointer-events-none');
+                document.getElementById('edit_status_help').innerText = '*อุปกรณ์ชิ้นนี้กำลังถูกยืม ไม่สามารถเปลี่ยนสถานะได้ในขณะนี้ แต่อัปเดตสเปคได้';
+                document.getElementById('edit_status_help').classList.add('text-orange-500');
+            } else {
+                statusEl.innerHTML = `
+                    <option value="available" class="text-green-600">พร้อมใช้งาน</option>
+                    <option value="maintenance" class="text-orange-600">ส่งซ่อม / บำรุงรักษา</option>
+                    <option value="broken" class="text-red-600">ชำรุด / พัง</option>
+                `;
+                statusEl.value = item.status;
+                statusEl.classList.remove('bg-gray-100', 'pointer-events-none');
+                document.getElementById('edit_status_help').innerHTML = '<i class="fa-solid fa-circle-info"></i> เลือกสถานะของอุปกรณ์เพื่อให้ตรงกับความเป็นจริง';
+                document.getElementById('edit_status_help').classList.remove('text-orange-500');
+            }
+
+            // จัดการ UI
+            toggleEditEqFields();
+            document.getElementById('editModal').classList.remove('hidden');
+
+        } else {
+            Swal.fire('ข้อผิดพลาด', res.message, 'error');
+        }
+    })
+    .catch(err => {
+        console.error(err);
+        Swal.fire('ข้อผิดพลาด', 'ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้', 'error');
+    });
+}
+
+function closeEditModal() {
+    document.getElementById('editModal').classList.add('hidden');
 }
 
 function deleteEquipment(id) {
@@ -342,46 +700,7 @@ function deleteEquipment(id) {
         }
     })
 }
-function updateEqStatus(id, newStatus) {
-    if(!newStatus) return;
-    
-    let statusName = '';
-    if(newStatus === 'available') statusName = 'พร้อมใช้งาน';
-    if(newStatus === 'maintenance') statusName = 'ส่งซ่อม';
-    if(newStatus === 'broken') statusName = 'ชำรุด/พัง';
 
-    Swal.fire({
-        title: 'ยืนยันเปลี่ยนสถานะ?',
-        text: `ต้องการเปลี่ยนเป็น "${statusName}" ใช่หรือไม่`,
-        icon: 'question',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'ใช่, เปลี่ยนเลย!',
-        cancelButtonText: 'ยกเลิก'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            let fd = new FormData();
-            fd.append('action', 'update_status');
-            fd.append('id', id);
-            fd.append('status', newStatus);
-
-            fetch('api/equipment_api.php', { method: 'POST', body: fd })
-            .then(res => res.json())
-            .then(res => {
-                if(res.status === 'success') {
-                    Swal.fire('สำเร็จ', res.message, 'success');
-                    loadEquipments();
-                } else {
-                    Swal.fire('Error', res.message, 'error');
-                    loadEquipments(); // โหลดใหม่เพื่อรีเซ็ต select box กลับค่าเดิมกรณี error
-                }
-            });
-        } else {
-            loadEquipments(); // โหลดใหม่ถ้ายกเลิก เพื่อให้ select box กลับไปหน้าตาเดิม
-        }
-    });
-}
 function closeEqHistoryModal() {
     document.getElementById('eqHistoryModal').classList.add('hidden');
 }

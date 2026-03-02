@@ -1,23 +1,33 @@
 <?php require_once 'includes/header.php'; ?>
 
-<div class="mb-6 flex flex-col md:flex-row md:justify-between md:items-center gap-4 animate__animated animate__fadeInDown">
-    <div>
-        <h1 class="text-3xl font-extrabold text-gray-800">รายชื่อผู้ยืม <i class="fa-solid fa-users text-primary"></i></h1>
-        <p class="text-gray-500 mt-1">จัดการรายชื่อพนักงาน และทำรายการยืม-คืนอุปกรณ์</p>
+<div class="mb-4 animate__animated animate__fadeInDown">
+    <h1 class="text-3xl font-extrabold text-gray-800">รายชื่อผู้ยืม <i class="fa-solid fa-users text-primary"></i></h1>
+    <p class="text-gray-500 mt-1">รายการยืม-คืนอุปกรณ์</p>
+</div>
+
+<!-- Control Panel (ตรึงด้านบนเวลาเลื่อน) -->
+<div class="sticky top-[64px] z-40 bg-white/95 backdrop-blur-md rounded-xl shadow-[0_4px_10px_rgba(0,0,0,0.05)] border border-gray-200 p-4 mb-4 transform transition-all">
+    <div class="flex flex-row items-end gap-2">
+        <!-- ช่องค้นหา -->
+        <div class="flex-grow">
+            <label class="block text-xs font-bold text-gray-700 mb-1">ค้นหารายชื่อ</label>
+            <input type="text" id="customSearch" class="w-full border-gray-300 rounded-md shadow-sm focus:ring-primary focus:border-primary text-sm p-2 border outline-none" placeholder="...">
+        </div>
+        <!-- ปุ่มเพิ่มผู้ยืม -->
+        <button onclick="openAddEmpModal()" class="shrink-0 bg-primary hover:bg-secondary text-white font-bold px-3 rounded-md shadow-sm transition-all focus:outline-none flex items-center justify-center gap-1 h-[38px]">
+            <i class="fa-solid fa-user-plus"></i> <span class="hidden sm:inline text-sm">เพิ่มรายชื่อ</span>
+        </button>
     </div>
-    <button onclick="openAddEmpModal()" class="bg-primary hover:bg-secondary text-white font-bold py-2 px-4 rounded-lg shadow-md transition-all flex items-center gap-2">
-        <i class="fa-solid fa-user-plus"></i> เพิ่มรายชื่อ
-    </button>
 </div>
 
 <!-- ตารางแสดงรายชื่อพนักงาน -->
-<div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 animate__animated animate__fadeInUp">
-    <table id="employeeTable" class="w-full text-left" style="width:100%">
+<div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 relative z-10 animate__animated animate__fadeInUp overflow-hidden">
+    <table id="employeeTable" class="w-full text-left whitespace-nowrap" style="width:100%">
         <thead class="bg-gray-50 text-gray-700">
             <tr>
                 <th class="py-2 px-3">รหัสพนักงาน</th>
-                <th class="py-2 px-3">ชื่อ-นามสกุล</th>
-                <th class="py-2 px-3">แผนก/ฝ่าย</th>
+                <th class="py-2 px-3">ชื่อ-สกุล</th>
+                <th class="py-2 px-3">แผนก</th>
                 <th class="py-2 px-3">ตำแหน่ง</th>
                 <th class="py-2 px-3 text-center">จัดการ</th>
             </tr>
@@ -37,19 +47,19 @@
         <div class="inline-block align-bottom bg-white rounded-xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full animate__animated animate__zoomIn">
             <form id="addEmpForm">
                 <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-                    <h3 class="text-lg leading-6 font-bold text-gray-900 mb-4 border-b pb-2"><i class="fa-solid fa-user text-primary"></i> ข้อมูลผู้ยืมใหม่</h3>
+                    <h3 class="text-lg leading-6 font-bold text-gray-900 mb-4 border-b pb-2"><i class="fa-solid fa-user text-primary"></i>ข้อมูลผู้ยืมใหม่</h3>
                     
                     <div class="grid grid-cols-1 gap-4">
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">รหัสพนักงาน <span class="text-red-500">*</span></label>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">รหัสพนักงาน<span class="text-red-500">*</span></label>
                             <input type="text" name="emp_code" required class="w-full border-gray-300 rounded-md shadow-sm focus:ring-primary focus:border-primary sm:text-sm p-2 border">
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">ชื่อ-นามสกุล <span class="text-red-500">*</span></label>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">ชื่อ-สกุล<span class="text-red-500">*</span></label>
                             <input type="text" name="emp_name" required class="w-full border-gray-300 rounded-md shadow-sm focus:ring-primary focus:border-primary sm:text-sm p-2 border">
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">แผนก/ฝ่าย</label>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">แผนก</label>
                             <input type="text" name="department" class="w-full border-gray-300 rounded-md shadow-sm focus:ring-primary focus:border-primary sm:text-sm p-2 border">
                         </div>
                         <div>
@@ -88,7 +98,7 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <!-- ประวัติที่ยืมอยู่ -->
                     <div class="border rounded-lg p-4 bg-gray-50">
-                        <h4 class="font-bold text-gray-700 mb-3"><i class="fa-solid fa-box-open text-amber-500"></i> อุปกรณ์ที่กำลังยืมอยู่ตอนนี้</h4>
+                        <h4 class="font-bold text-gray-700 mb-3"><i class="fa-solid fa-box-open text-amber-500"></i> อุปกรณ์ที่กำลังยืมอยู่</h4>
                         <div id="borrowed_list" class="space-y-3 max-h-64 overflow-y-auto pr-2">
                             <div class="text-center py-4 text-gray-400">ไม่มีรายการยืม</div>
                         </div>
@@ -108,7 +118,7 @@
                                 
                                 <label class="block text-sm font-medium text-gray-700 mb-1">สถานที่ตั้งอุปกรณ์ (ห้อง) <span class="text-red-500">*</span></label>
                                 <select id="location_select" name="location" required class="w-full border-gray-300 rounded-md shadow-sm focus:ring-primary focus:border-primary sm:text-sm p-2 border">
-                                    <option value="">-- เลือกห้องที่ตั้งอุปกรณ์ --</option>
+                                    <option value="">-- ห้องที่ตั้งอุปกรณ์ --</option>
                                     <option value="ห้องHR">ห้องHR</option>
                                     <option value="ห้องTransport">ห้องTransport</option>
                                     <option value="ห้องบัญชี">ห้องบัญชี</option>
@@ -120,12 +130,12 @@
                                     <option value="แหลมฉบัง">แหลมฉบัง</option>
                                 </select>
                                 
-                                <label class="block text-sm font-medium text-gray-700 mt-3 mb-1">วันที่/เวลายืม (ปรับแก้ได้) <span class="text-xs text-gray-400 font-normal ml-1">ถ้าไม่ใส่ระบบจะใช้วันนี้</span></label>
+                                <label class="block text-sm font-medium text-gray-700 mt-3 mb-1">วันที่/เวลายื <span class="text-xs text-gray-400 font-normal ml-1">ถ้าไม่ใส่ระบบจะใช้วันนี้</span></label>
                                 <input type="datetime-local" id="borrow_date_input" name="borrow_date" class="w-full border-gray-300 rounded-md shadow-sm focus:ring-primary focus:border-primary sm:text-sm p-2 border">
                             </div>
 
                             <button type="submit" class="w-full bg-primary hover:bg-secondary text-white font-bold py-2 px-4 rounded-lg shadow-md transition-all">
-                                ยืนยันการยืมอุปกรณ์นี้
+                                ยืนยันการยืมอุปกรณ์
                             </button>
                         </form>
                     </div>
@@ -184,7 +194,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 Swal.fire({ title: 'สำเร็จ', text: res.message, icon: 'success', timer: 1500, showConfirmButton: false });
                 
                 // คืนค่าฟอร์ม และโหลดข้อมูลใหม่
-                document.getElementById('equipment_select').value = '';
+                $('#equipment_select').val('').trigger('change');
                 document.getElementById('location_select').value = '';
                 loadAvailableEquipments(); // โหลดอุปกรณ์ที่ว่างใหม่
                 
@@ -210,6 +220,17 @@ function loadAvailableEquipments() {
             allEquipments.forEach(item => {
                 let text = `[${item.barcode}] ${item.type} ${item.brand || ''} ${item.model || ''}`;
                 select.innerHTML += `<option value="${item.id}">${text}</option>`;
+            });
+
+            // Initialize or update Select2
+            $('#equipment_select').select2({
+                dropdownParent: $('#actionModal'),
+                width: '100%',
+                language: {
+                    noResults: function () {
+                        return "ค้นหาไม่พบ";
+                    }
+                }
             });
         }
     });
@@ -243,7 +264,23 @@ function loadEmployees() {
                     `;
                     tbody.appendChild(tr);
                 });
-                empTable = $('#employeeTable').DataTable();
+                empTable = $('#employeeTable').DataTable({
+                    responsive: true,
+                    // B: Buttons (ซ่อน), r: processing, t: table, i: info, p: paging
+                    dom: '<"hidden"B>rt<"flex flex-col md:flex-row justify-between items-center mt-4 text-sm"ip>'
+                });
+
+                // เชื่อมช่องค้นหา Control Panel เข้ากับ DataTables
+                $('#customSearch').off('keyup').on('keyup', function() {
+                    empTable.search(this.value).draw();
+                });
+
+                // บังคับให้ตารางคำนวณขนาดและจัดคอลัมน์ใหม่เมื่อย่อ/ขยายหน้าจอ
+                $(window).on('resize', function() {
+                    if (empTable) {
+                        empTable.columns.adjust().responsive.recalc();
+                    }
+                });
             }
         })
         .catch(err => {
@@ -262,7 +299,7 @@ function closeAddEmpModal() { document.getElementById('addEmpModal').classList.a
 function openActionModal(empId, empName) {
     document.getElementById('modal_emp_name').innerText = empName;
     document.getElementById('borrow_emp_id').value = empId;
-    document.getElementById('equipment_select').value = '';
+    $('#equipment_select').val('').trigger('change');
     
     // ตั้งค่า DateTime เริ่มต้นเป็นเวลาปัจจุบัน
     let now = new Date();
@@ -315,20 +352,38 @@ function loadEmployeeItems(empId) {
 }
 
 function returnByBarcode(barcode, empId) {
+    let now = new Date();
+    // ปรับ timezone แบบง่ายให้เป็น local (ดึง iso string แล้วตัดตัว Z ออก)
+    now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+    let defaultDateTime = now.toISOString().slice(0, 16);
+
     Swal.fire({
         title: 'ยืนยันการคืน?',
-        html: `ต้องการคืนอุปกรณ์รหัส <b class="text-blue-600">${barcode}</b> ใช่หรือไม่?`,
+        html: `
+            <div class="mb-4">ต้องการคืนอุปกรณ์รหัส <b class="text-blue-600">${barcode}</b> ใช่หรือไม่?</div>
+            <div class="text-left mt-4">
+                <label class="block text-sm font-medium text-gray-700 mb-1">วันที่/เวลาคืน <span class="text-xs text-gray-400 font-normal ml-1">ถ้าไม่ใส่ระบบจะใช้วันนี้</span></label>
+                <input type="datetime-local" id="swal-return-date" class="w-full border-gray-300 rounded-md shadow-sm sm:text-sm p-2 border" value="${defaultDateTime}">
+            </div>
+        `,
         icon: 'question',
         showCancelButton: true,
         confirmButtonColor: '#10b981',
         cancelButtonColor: '#6b7280',
         confirmButtonText: 'ใช่, คืนอุปกรณ์',
-        cancelButtonText: 'ยกเลิก'
+        cancelButtonText: 'ยกเลิก',
+        preConfirm: () => {
+            return document.getElementById('swal-return-date').value;
+        }
     }).then((result) => {
         if (result.isConfirmed) {
+            let returnDate = result.value;
             let fd = new FormData();
             fd.append('action', 'return');
             fd.append('barcode', barcode);
+            if (returnDate) {
+                fd.append('return_date', returnDate);
+            }
 
             fetch('api/borrow_api.php', { method: 'POST', body: fd })
             .then(res => res.json())

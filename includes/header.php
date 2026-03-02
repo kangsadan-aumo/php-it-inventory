@@ -13,6 +13,9 @@
     <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.1/css/buttons.dataTables.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.dataTables.min.css">
     
+    <!-- Select2 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
     <!-- Animate.css for subtle animations -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
 
@@ -65,7 +68,7 @@
             <div class="hidden md:flex items-center space-x-4">
                 <a href="index.php" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-primary hover:bg-blue-50 transition-all font-semibold"><i class="fa-solid fa-chart-line mr-1"></i> แดชบอร์ด</a>
                 <a href="equipments.php" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-primary hover:bg-blue-50 transition-all"><i class="fa-solid fa-boxes-stacked mr-1"></i> อุปกรณ์</a>
-                <a href="borrow.php" class="px-3 py-2 rounded-md text-sm font-medium text-white bg-primary hover:bg-secondary shadow-sm hover:shadow-md transition-all"><i class="fa-solid fa-hand-holding-hand mr-1"></i> ยืม-คืน</a>
+                <a href="borrow.php" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-primary hover:bg-blue-50 transition-all"><i class="fa-solid fa-hand-holding-hand mr-1"></i> ยืม-คืน</a>
                 <a href="history.php" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-primary hover:bg-blue-50 transition-all"><i class="fa-solid fa-clock-rotate-left mr-1"></i> ประวัติ</a>
             </div>
         </div>
