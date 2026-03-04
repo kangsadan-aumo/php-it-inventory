@@ -52,7 +52,23 @@ switch ($action) {
                 responseJson('error', 'บาร์โค้ดนี้มีอยู่ในระบบแล้ว');
             }
 
-            $sql = "INSERT INTO equipments (barcode, serial_number, type, brand, model, cpu_gen, ram_gb, storage_type, storage_gb, os, location, status) 
+            // Prepare storage JSON
+            $storageData = [];
+            $storageTypes = $_POST['storage_types'] ?? [];
+            $storageGbs = $_POST['storage_gbs'] ?? [];
+            if (is_array($storageTypes) && is_array($storageGbs)) {
+                for ($i = 0; $i < count($storageTypes); $i++) {
+                    if (!empty($storageTypes[$i]) && !empty($storageGbs[$i])) {
+                        $storageData[] = [
+                            "type" => $storageTypes[$i],
+                            "gb" => (int)$storageGbs[$i]
+                        ];
+                    }
+                }
+            }
+            $storageJson = !empty($storageData) ? json_encode($storageData) : null;
+
+            $sql = "INSERT INTO equipments (barcode, serial_number, type, brand, model, cpu_gen, ram_gb, storage_json, os, location, status, remark) 
                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             $stmt = $pdo->prepare($sql);
             $stmt->execute([
@@ -63,11 +79,11 @@ switch ($action) {
                 $_POST['model'] ?? null,
                 $_POST['cpu_gen'] ?? null,
                 !empty($_POST['ram_gb']) ? $_POST['ram_gb'] : null,
-                $_POST['storage_type'] ?? null,
-                !empty($_POST['storage_gb']) ? $_POST['storage_gb'] : null,
+                $storageJson,
                 $_POST['os'] ?? null,
                 $_POST['location'] ?? null,
-                $_POST['status'] ?? 'available'
+                $_POST['status'] ?? 'available',
+                $_POST['remark'] ?? null
             ]);
 
             responseJson('success', 'เพิ่มอุปกรณ์สำเร็จ');
@@ -118,9 +134,25 @@ switch ($action) {
                 responseJson('error', 'บาร์โค้ดนี้มีอยู่ในระบบแล้ว');
             }
 
+            // Prepare storage JSON
+            $storageData = [];
+            $storageTypes = $_POST['storage_types'] ?? [];
+            $storageGbs = $_POST['storage_gbs'] ?? [];
+            if (is_array($storageTypes) && is_array($storageGbs)) {
+                for ($i = 0; $i < count($storageTypes); $i++) {
+                    if (!empty($storageTypes[$i]) && !empty($storageGbs[$i])) {
+                        $storageData[] = [
+                            "type" => $storageTypes[$i],
+                            "gb" => (int)$storageGbs[$i]
+                        ];
+                    }
+                }
+            }
+            $storageJson = !empty($storageData) ? json_encode($storageData) : null;
+
             $sql = "UPDATE equipments SET 
                     barcode=?, serial_number=?, type=?, brand=?, model=?, 
-                    cpu_gen=?, ram_gb=?, storage_type=?, storage_gb=?, os=?, location=?, status=?
+                    cpu_gen=?, ram_gb=?, storage_json=?, os=?, location=?, status=?, remark=?
                     WHERE id=?";
             $stmt = $pdo->prepare($sql);
             $stmt->execute([
@@ -131,11 +163,11 @@ switch ($action) {
                 $_POST['model'] ?? null,
                 $_POST['cpu_gen'] ?? null,
                 !empty($_POST['ram_gb']) ? $_POST['ram_gb'] : null,
-                $_POST['storage_type'] ?? null,
-                !empty($_POST['storage_gb']) ? $_POST['storage_gb'] : null,
+                $storageJson,
                 $_POST['os'] ?? null,
                 $_POST['location'] ?? null,
                 $status,
+                $_POST['remark'] ?? null,
                 $id
             ]);
 

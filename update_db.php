@@ -1,8 +1,8 @@
 <?php
 require_once 'config.php';
 try {
-    $pdo->exec("ALTER TABLE borrowings Add COLUMN location VARCHAR(150) NULL COMMENT 'ห้องที่ตั้งอุปกรณ์' AFTER employee_id;");
-    echo "Success";
+    $pdo->exec("ALTER TABLE equipments ADD COLUMN remark TEXT NULL COMMENT 'หมายเหตุการซ่อมหรืออื่นๆ';");
+    echo "Success: added remark column to equipments";
 }
 catch (Exception $e) {
     echo $e->getMessage();

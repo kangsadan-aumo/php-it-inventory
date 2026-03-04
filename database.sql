@@ -12,8 +12,7 @@ CREATE TABLE IF NOT EXISTS equipments (
     model VARCHAR(100) COMMENT 'รุ่น',
     cpu_gen VARCHAR(100) COMMENT 'สเปค CPU เช่น i5 Gen 12',
     ram_gb INT COMMENT 'ขนาด RAM (GB)',
-    storage_type ENUM('HDD', 'SSD', 'M.2') COMMENT 'ประเภทที่เก็บข้อมูล',
-    storage_gb INT COMMENT 'ขนาดพื้นที่เก็บข้อมูล (GB)',
+    storage_json JSON NULL COMMENT 'ข้อมูล storage หลายตัว เช่น [{"type":"SSD", "gb":512}, {"type":"HDD", "gb":1000}]',
     os VARCHAR(50) COMMENT 'ระบบปฏิบัติการ เช่น Windows 11',
     status ENUM('available', 'borrowed', 'maintenance', 'broken') DEFAULT 'available' COMMENT 'สถานะเครื่อง',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -43,9 +42,9 @@ CREATE TABLE IF NOT EXISTS borrowings (
 );
 
 -- เพิ่มข้อมูลจำลองเล็กน้อยเผื่อไว้ทดสอบ (ปรับแก้ได้)
-INSERT INTO equipments (barcode, serial_number, type, brand, model, cpu_gen, ram_gb, storage_type, storage_gb, os, status) VALUES
-('PC-001', 'SN-MON-991', 'PC', 'DELL', 'OptiPlex 7090', 'i7 Gen 11', 16, 'M.2', 512, 'Windows 11 Pro', 'available'),
-('NB-002', NULL, 'Notebook', 'Lenovo', 'ThinkPad T14', 'i5 Gen 12', 16, 'M.2', 512, 'Windows 11 Pro', 'available');
+INSERT INTO equipments (barcode, serial_number, type, brand, model, cpu_gen, ram_gb, storage_json, os, status) VALUES
+('PC-001', 'SN-MON-991', 'PC', 'DELL', 'OptiPlex 7090', 'i7 Gen 11', 16, '[{"type":"M.2","gb":512}]', 'Windows 11 Pro', 'available'),
+('NB-002', NULL, 'Notebook', 'Lenovo', 'ThinkPad T14', 'i5 Gen 12', 16, '[{"type":"M.2","gb":512}]', 'Windows 11 Pro', 'available');
 
 INSERT INTO employees (emp_code, emp_name, department, position) VALUES
 ('EMP001', 'สมชาย ใจดี', 'IT Support', 'IT Officer'),

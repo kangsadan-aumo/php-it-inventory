@@ -105,20 +105,28 @@
                                 <label class="block text-sm font-medium text-gray-700 mb-1">RAM (GB)</label>
                                 <input type="number" name="ram_gb" class="w-full border-gray-300 rounded-md shadow-sm focus:ring-primary focus:border-primary sm:text-sm p-2 border" placeholder="เช่น 8, 16">
                             </div>
-                            <div class="grid grid-cols-2 gap-2">
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-1">Storage Type</label>
-                                    <select name="storage_type" class="w-full border-gray-300 rounded-md shadow-sm focus:ring-primary focus:border-primary sm:text-sm p-2 border">
-                                        <option value="SSD">SSD</option>
-                                        <option value="M.2">M.2</option>
-                                        <option value="HDD">HDD</option>
-                                    </select>
+                            <!-- Storage Dynamic Fields (Add) -->
+                            <div class="md:col-span-2">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">พื้นที่จัดเก็บข้อมูล (Storage)</label>
+                                <div id="storageFieldsContainer" class="space-y-2">
+                                    <!-- ตัวแรก (ลบไม่ได้) -->
+                                    <div class="flex items-center gap-2 storage-row">
+                                        <select name="storage_types[]" class="w-1/3 border-gray-300 rounded-md shadow-sm focus:ring-primary focus:border-primary sm:text-sm p-2 border">
+                                            <option value="SSD">SSD</option>
+                                            <option value="HDD">HDD</option>
+                                            <option value="M.2">M.2</option>
+                                        </select>
+                                        <input type="number" name="storage_gbs[]" class="w-full border-gray-300 rounded-md shadow-sm focus:ring-primary focus:border-primary sm:text-sm p-2 border" placeholder="ความจุ (GB) เช่น 512, 1000">
+                                        <button type="button" class="w-10 h-10 flex-shrink-0 bg-gray-100 text-gray-400 rounded-md cursor-not-allowed cursor-default flex items-center justify-center border border-gray-200" disabled>
+                                            <i class="fa-solid fa-trash"></i>
+                                        </button>
+                                    </div>
                                 </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-1">ความจุ (GB)</label>
-                                    <input type="number" name="storage_gb" class="w-full border-gray-300 rounded-md shadow-sm focus:ring-primary focus:border-primary sm:text-sm p-2 border" placeholder="256, 512">
-                                </div>
+                                <button type="button" onclick="addStorageField('storageFieldsContainer')" class="mt-2 text-sm text-blue-600 hover:text-blue-800 font-medium flex items-center gap-1">
+                                    <i class="fa-solid fa-plus-circle"></i> เพิ่มพื้นที่จัดเก็บ
+                                </button>
                             </div>
+
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-1">OS (ระบบปฏิบัติการ)</label>
                                 <input type="text" name="os" class="w-full border-gray-300 rounded-md shadow-sm focus:ring-primary focus:border-primary sm:text-sm p-2 border" placeholder="เช่น Windows 11 Pro">
@@ -203,20 +211,17 @@
                                 <label class="block text-sm font-medium text-gray-700 mb-1">RAM (GB)</label>
                                 <input type="number" name="ram_gb" id="edit_ram_gb" class="w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm p-2 border">
                             </div>
-                            <div class="grid grid-cols-2 gap-2">
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-1">Storage Type</label>
-                                    <select name="storage_type" id="edit_storage_type" class="w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm p-2 border">
-                                        <option value="SSD">SSD</option>
-                                        <option value="M.2">M.2</option>
-                                        <option value="HDD">HDD</option>
-                                    </select>
+                            <!-- Storage Dynamic Fields (Edit) -->
+                            <div class="md:col-span-2">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">พื้นที่จัดเก็บข้อมูล (Storage)</label>
+                                <div id="editStorageFieldsContainer" class="space-y-2">
+                                    <!-- Rows will be injected by JS -->
                                 </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-1">ความจุ (GB)</label>
-                                    <input type="number" name="storage_gb" id="edit_storage_gb" class="w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm p-2 border">
-                                </div>
+                                <button type="button" onclick="addStorageField('editStorageFieldsContainer')" class="mt-2 text-sm text-blue-600 hover:text-blue-800 font-medium flex items-center gap-1">
+                                    <i class="fa-solid fa-plus-circle"></i> เพิ่มพื้นที่จัดเก็บ
+                                </button>
                             </div>
+
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-1">OS (ระบบปฏิบัติการ)</label>
                                 <input type="text" name="os" id="edit_os" class="w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm p-2 border">
@@ -232,6 +237,12 @@
                                 <option value="broken" class="text-red-600">ชำรุด / พัง</option>
                             </select>
                             <p class="text-xs text-gray-500 mt-1" id="edit_status_help"><i class="fa-solid fa-circle-info"></i> เลือกสถานะของอุปกรณ์เพื่อให้ตรงกับความเป็นจริง</p>
+                        </div>
+                        
+                        <!-- Remark Selection -->
+                        <div class="md:col-span-2 mt-2 hidden animate__animated animate__fadeIn" id="editRemarkGroup">
+                            <label class="block text-sm font-bold text-gray-900 mb-2">หมายเหตุ / อาการเสีย</label>
+                            <textarea name="remark" id="edit_remark" rows="2" class="w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm p-2 border" placeholder="เช่น จอฟ้า, ฮาร์ดดิสก์เสีย แจ้งซ่อมวันที่..."></textarea>
                         </div>
                     </div>
                 </div>
@@ -374,23 +385,41 @@ function loadEquipments() {
                 
                 res.data.forEach(item => {
                     // จัดการสีของสถานะ (Badge เป็นวงกลมสี)
-                    let statusBadge = '';
+                    let statusBadgeHtml = '';
                     if(item.status === 'available') {
-                        statusBadge = '<div class="flex items-center justify-center" title="พร้อมใช้งาน"><span class="w-4 h-4 rounded-full bg-green-500 shadow-sm"></span></div>';
+                        statusBadgeHtml = '<span class="w-4 h-4 rounded-full bg-green-500 shadow-sm" title="พร้อมใช้งาน"></span>';
                     } else if(item.status === 'borrowed') {
-                        statusBadge = '<div class="flex items-center justify-center" title="ถูกยืม"><span class="w-4 h-4 rounded-full bg-yellow-400 shadow-sm"></span></div>';
+                        statusBadgeHtml = '<span class="w-4 h-4 rounded-full bg-yellow-400 shadow-sm" title="ถูกยืม"></span>';
                     } else if(item.status === 'maintenance') {
-                        statusBadge = '<div class="flex items-center justify-center" title="ส่งซ่อม"><span class="w-4 h-4 rounded-full bg-orange-500 shadow-sm"></span></div>';
+                        statusBadgeHtml = '<span class="w-4 h-4 rounded-full bg-orange-500 shadow-sm" title="ส่งซ่อม"></span>';
                     } else if(item.status === 'broken') {
-                        statusBadge = '<div class="flex items-center justify-center" title="ชำรุด/พัง"><span class="w-4 h-4 rounded-full bg-red-500 shadow-sm"></span></div>';
+                        statusBadgeHtml = '<span class="w-4 h-4 rounded-full bg-red-500 shadow-sm" title="ชำรุด/พัง"></span>';
                     } else {
-                        statusBadge = `<div class="flex items-center justify-center" title="${item.status}"><span class="w-4 h-4 rounded-full bg-gray-500 shadow-sm"></span></div>`;
+                        statusBadgeHtml = `<span class="w-4 h-4 rounded-full bg-gray-500 shadow-sm" title="${item.status}"></span>`;
                     }
+
+                    if (item.remark && item.remark.trim() !== '') {
+                        let safeRemark = item.remark.replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+                        statusBadgeHtml += `<i class="fa-solid fa-note-sticky text-yellow-500 ml-2 cursor-pointer" title="หมายเหตุ: ${safeRemark}"></i>`;
+                    }
+                    
+                    let statusBadge = `<div class="flex items-center justify-center">${statusBadgeHtml}</div>`;
 
                     let specs = [];
                     if(item.cpu_gen) specs.push(item.cpu_gen);
                     if(item.ram_gb) specs.push(`RAM ${item.ram_gb}GB`);
-                    if(item.storage_type && item.storage_gb) specs.push(`${item.storage_type} ${item.storage_gb}GB`);
+                    let storageList = [];
+                    if(item.storage_json) {
+                        try {
+                            let storageArr = JSON.parse(item.storage_json);
+                            if (Array.isArray(storageArr)) {
+                                storageArr.forEach(s => {
+                                    if(s.type && s.gb) storageList.push(`${s.type} ${s.gb}GB`);
+                                });
+                            }
+                        } catch(e) { }
+                    }
+                    if(storageList.length > 0) specs.push(storageList.join(' + '));
                     if(item.type === 'Printer' && item.location) specs.push(`ที่ตั้ง: ${item.location}`);
                     let sp_str = specs.join(' / ') || '-';
                     
@@ -597,8 +626,55 @@ function toggleEditEqFields() {
     }
 }
 
+function addStorageField(containerId, data = null) {
+    let container = document.getElementById(containerId);
+    if (!container) return;
+
+    let typeVal = data ? data.type : 'SSD';
+    let gbVal = data ? data.gb : '';
+
+    let isFirst = container.children.length === 0;
+
+    let row = document.createElement('div');
+    row.className = 'flex items-center gap-2 storage-row animate__animated animate__fadeIn relative';
+    
+    // แบบลบไม่ได้ (อันแรก) vs ลบได้
+    let btnHtml = isFirst 
+        ? `<button type="button" class="w-10 h-10 flex-shrink-0 bg-gray-100 text-gray-400 rounded-md cursor-not-allowed flex items-center justify-center border border-gray-200" disabled>
+                <i class="fa-solid fa-trash"></i>
+           </button>`
+        : `<button type="button" onclick="removeStorageField(this)" class="w-10 h-10 flex-shrink-0 bg-white hover:bg-red-50 text-red-500 rounded-md cursor-pointer flex items-center justify-center border border-gray-300 transition-colors title="ลบ" shadow-sm">
+                <i class="fa-solid fa-trash"></i>
+           </button>`;
+
+    row.innerHTML = `
+        <select name="storage_types[]" class="w-1/3 border-gray-300 rounded-md shadow-sm focus:ring-primary focus:border-primary sm:text-sm p-2 border">
+            <option value="SSD" ${typeVal === 'SSD' ? 'selected' : ''}>SSD</option>
+            <option value="HDD" ${typeVal === 'HDD' ? 'selected' : ''}>HDD</option>
+            <option value="M.2" ${typeVal === 'M.2' ? 'selected' : ''}>M.2</option>
+        </select>
+        <input type="number" name="storage_gbs[]" value="${gbVal}" class="w-full border-gray-300 rounded-md shadow-sm focus:ring-primary focus:border-primary sm:text-sm p-2 border" placeholder="ความจุ (GB) เช่น 512, 1000">
+        ${btnHtml}
+    `;
+
+    container.appendChild(row);
+}
+
+function removeStorageField(btn) {
+    let row = btn.closest('.storage-row');
+    if (row) {
+        row.remove();
+    }
+}
+
 function openAddModal() {
     document.getElementById('addEqForm').reset();
+    
+    // Reset Storage Fields
+    let storageContainer = document.getElementById('storageFieldsContainer');
+    storageContainer.innerHTML = '';
+    addStorageField('storageFieldsContainer'); // เพิ่มบรรทัดแรก
+
     document.getElementById('addModal').classList.remove('hidden');
     toggleEqFields();
 }
@@ -625,13 +701,47 @@ function openEditModal(id) {
             document.getElementById('edit_location').value = item.location || '';
             document.getElementById('edit_cpu_gen').value = item.cpu_gen || '';
             document.getElementById('edit_ram_gb').value = item.ram_gb || '';
-            document.getElementById('edit_storage_type').value = item.storage_type || 'SSD';
-            document.getElementById('edit_storage_gb').value = item.storage_gb || '';
             document.getElementById('edit_os').value = item.os || '';
+            
+            // Build Edit Storage Rows
+            let editStorageContainer = document.getElementById('editStorageFieldsContainer');
+            editStorageContainer.innerHTML = '';
+            let hasStorage = false;
+            if (item.storage_json) {
+                try {
+                    let storageArr = JSON.parse(item.storage_json);
+                    if (Array.isArray(storageArr)) {
+                        storageArr.forEach(s => {
+                            addStorageField('editStorageFieldsContainer', s);
+                            hasStorage = true;
+                        });
+                    }
+                } catch(e) {}
+            }
+            if (!hasStorage) {
+                // Default 1 empty row
+                addStorageField('editStorageFieldsContainer');
+            }
             
             // Set Status
             let statusEl = document.getElementById('edit_status');
             statusEl.value = item.status || 'available';
+
+            // Set Remark
+            document.getElementById('edit_remark').value = item.remark || '';
+
+            // Handle Remark visibility
+            function toggleRemarkField() {
+                let currentStatus = document.getElementById('edit_status').value;
+                let remarkGroup = document.getElementById('editRemarkGroup');
+                if (currentStatus === 'maintenance' || currentStatus === 'broken' || document.getElementById('edit_remark').value.trim() !== '') {
+                    remarkGroup.classList.remove('hidden');
+                } else {
+                    remarkGroup.classList.add('hidden');
+                }
+            }
+            toggleRemarkField();
+            document.getElementById('edit_status').onchange = toggleRemarkField;
 
             // ถ้าเครื่องถูกยืมอยู่ ห้ามเปลี่ยนสถานะผ่านหน้านี้ ป้องกันบัค
             if (item.status === 'borrowed') {
