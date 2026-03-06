@@ -1,3 +1,14 @@
+<?php
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+// Protect all pages except login.php
+$current_page = basename($_SERVER['PHP_SELF']);
+if (!isset($_SESSION['user_id']) && $current_page !== 'login.php') {
+    header("Location: login.php");
+    exit();
+}
+?>
 <!DOCTYPE html>
 <html lang="th">
 <head>
@@ -70,10 +81,55 @@
                 <a href="equipments.php" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-primary hover:bg-blue-50 transition-all"><i class="fa-solid fa-boxes-stacked mr-1"></i> อุปกรณ์</a>
                 <a href="borrow.php" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-primary hover:bg-blue-50 transition-all"><i class="fa-solid fa-hand-holding-hand mr-1"></i> ยืม-คืน</a>
                 <a href="history.php" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-primary hover:bg-blue-50 transition-all"><i class="fa-solid fa-clock-rotate-left mr-1"></i> ประวัติ</a>
+                
+                <?php if (isset($_SESSION['user_id'])): ?>
+                <div class="border-l pl-4 flex items-center gap-3 ml-2">
+                    <span class="text-sm font-medium text-gray-600"><i class="fa-solid fa-circle-user text-gray-400 mr-1"></i> <?php echo htmlspecialchars($_SESSION['username'] ?? 'Admin'); ?></span>
+                    <button onclick="logoutUser()" class="px-3 py-1.5 rounded-md text-sm font-medium text-red-600 hover:text-white hover:bg-red-500 border border-red-200 hover:border-red-500 transition-all"><i class="fa-solid fa-arrow-right-from-bracket mr-1"></i> ออกจากระบบ</button>
+                </div>
+                <?php
+endif; ?>
             </div>
         </div>
     </div>
     
+    <script>
+    function logoutUser() {
+        if (typeof Swal !== 'undefined') {
+            Swal.fire({
+                title: 'ยืนยันออกจากระบบ?',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'ออกจากระบบ',
+                cancelButtonText: 'ยกเลิก'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    executeLogout();
+                }
+            });
+        } else {
+            if (confirm('ยืนยันออกจากระบบ?')) {
+                executeLogout();
+            }
+        }
+    }
+    
+    function executeLogout() {
+        let fd = new FormData();
+        fd.append('action', 'logout');
+        fetch('api/login_api.php', { method: 'POST', body: fd })
+        .then(res => res.json())
+        .then(res => {
+            if(res.status === 'success') {
+                window.location.href = 'login.php';
+            }
+        }).catch(err => {
+            window.location.href = 'login.php';
+        });
+    }
+    </script>
 </nav>
 
 <!-- Main Container -->

@@ -7,20 +7,37 @@
 
 <!-- Control Panel (ตรึงด้านบนเวลาเลื่อน) -->
 <div class="sticky top-[64px] z-40 bg-white/95 backdrop-blur-md rounded-xl shadow-[0_4px_10px_rgba(0,0,0,0.05)] border border-gray-200 p-4 mb-4 transform transition-all">
-    <div class="flex flex-row items-end gap-2">
-        <!-- ช่องค้นหา -->
-        <div class="flex-grow">
-            <label class="block text-xs font-bold text-gray-700 mb-1">ค้นหา</label>
-            <input type="text" id="customSearch" class="w-full border-gray-300 rounded-md shadow-sm focus:ring-primary focus:border-primary text-sm p-2 border outline-none" placeholder="...">
+    <div class="flex flex-col md:flex-row items-end gap-3">
+        <div class="w-full md:w-auto flex-grow flex gap-2 items-end">
+            <!-- ช่องค้นหา -->
+            <div class="flex-grow">
+                <label class="block text-xs font-bold text-gray-700 mb-1">ค้นหาบาร์โค้ด / สเปค</label>
+                <input type="text" id="customSearch" class="w-full border-gray-300 rounded-md shadow-sm focus:ring-primary focus:border-primary text-sm p-2 border outline-none" placeholder="ค้นหา...">
+            </div>
+            <!-- ตัวกรองหมวดหมู่ -->
+            <div class="w-1/3 md:w-48">
+                <label class="block text-xs font-bold text-gray-700 mb-1">หมวดหมู่</label>
+                <select id="categoryFilter" class="w-full border-gray-300 rounded-md shadow-sm focus:ring-primary focus:border-primary text-sm p-2 border outline-none">
+                    <option value="">ทั้งหมด (All)</option>
+                    <option value="PC">PC</option>
+                    <option value="Notebook">Notebook</option>
+                    <option value="Monitor">Monitor</option>
+                    <option value="Printer">Printer</option>
+                    <option value="AIO">AIO (All in One)</option>
+                    <option value="Other">อื่นๆ</option>
+                </select>
+            </div>
         </div>
-        <!-- ปุ่ม Excel -->
-        <button id="customExcel" class="shrink-0 bg-gray-100 hover:bg-gray-200 border border-gray-300 text-gray-700 rounded-md shadow-sm transition-all focus:outline-none flex items-center justify-center w-[42px] h-[38px]" title="ส่งออก Excel">
-            <i class="fa-solid fa-file-excel text-lg text-green-600"></i>
-        </button>
-        <!-- ปุ่มเพิ่มอุปกรณ์ -->
-        <button onclick="openAddModal()" class="shrink-0 bg-primary hover:bg-secondary text-white font-bold px-3 rounded-md shadow-sm transition-all focus:outline-none flex items-center justify-center gap-1 h-[38px]">
-            <i class="fa-solid fa-plus"></i> <span class="text-sm">เพิ่มอุปกรณ์</span>
-        </button>
+        <div class="flex gap-2">
+            <!-- ปุ่ม Excel -->
+            <button id="customExcel" class="shrink-0 bg-gray-100 hover:bg-gray-200 border border-gray-300 text-gray-700 rounded-md shadow-sm transition-all focus:outline-none flex items-center justify-center w-[42px] h-[38px]" title="ส่งออก Excel">
+                <i class="fa-solid fa-file-excel text-lg text-green-600"></i>
+            </button>
+            <!-- ปุ่มเพิ่มอุปกรณ์ -->
+            <button onclick="openAddModal()" class="shrink-0 bg-primary hover:bg-secondary text-white font-bold px-3 rounded-md shadow-sm transition-all focus:outline-none flex items-center justify-center gap-1 h-[38px]">
+                <i class="fa-solid fa-plus"></i> <span class="text-sm">เพิ่มอุปกรณ์</span>
+            </button>
+        </div>
     </div>
 </div>
 
@@ -70,9 +87,21 @@
                                 <option value="Notebook">Notebook (แล็ปท็อป)</option>
                                 <option value="Monitor">Monitor (หน้าจอ)</option>
                                 <option value="Printer">Printer (เครื่องพิมพ์)</option>
-                                <option value="Tablet">Tablet</option>
+                                <option value="AIO">AIO (All in One)</option>
                                 <option value="Other">อื่นๆ</option>
                             </select>
+                        </div>
+                        <!-- Sub Type Group -->
+                        <div id="subTypeGroup" class="hidden">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">หมวดหมู่ย่อย (Sub Category) <span class="text-red-500">*</span></label>
+                            <input type="text" name="sub_type" id="sub_type_input" list="subTypeOptions" class="w-full border-gray-300 rounded-md shadow-sm focus:ring-primary focus:border-primary sm:text-sm p-2 border" placeholder="เช่น เมาส์, คีย์บอร์ด">
+                            <datalist id="subTypeOptions">
+                                <option value="เมาส์">
+                                <option value="คีย์บอร์ด">
+                                <option value="ที่รองเมาส์">
+                                <option value="สายเคเบิล">
+                                <option value="แฟลชไดรฟ์">
+                            </datalist>
                         </div>
                         <div id="brandGroup">
                             <label class="block text-sm font-medium text-gray-700 mb-1" id="brandLabel">ยี่ห้อ (Brand)</label>
@@ -176,9 +205,14 @@
                                 <option value="Notebook">Notebook (แล็ปท็อป)</option>
                                 <option value="Monitor">Monitor (หน้าจอ)</option>
                                 <option value="Printer">Printer (เครื่องพิมพ์)</option>
-                                <option value="Tablet">Tablet</option>
+                                <option value="AIO">AIO (All in One)</option>
                                 <option value="Other">อื่นๆ</option>
                             </select>
+                        </div>
+                        <!-- Sub Type Group -->
+                        <div id="editSubTypeGroup" class="hidden">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">หมวดหมู่ย่อย (Sub Category) <span class="text-red-500">*</span></label>
+                            <input type="text" name="sub_type" id="edit_sub_type" list="subTypeOptions" class="w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm p-2 border" placeholder="เช่น เมาส์, คีย์บอร์ด">
                         </div>
                         <div id="editBrandGroup">
                             <label class="block text-sm font-medium text-gray-700 mb-1" id="editBrandLabel">ยี่ห้อ (Brand)</label>
@@ -386,24 +420,32 @@ function loadEquipments() {
                 res.data.forEach(item => {
                     // จัดการสีของสถานะ (Badge เป็นวงกลมสี)
                     let statusBadgeHtml = '';
+                    let excelStatus = '';
                     if(item.status === 'available') {
                         statusBadgeHtml = '<span class="w-4 h-4 rounded-full bg-green-500 shadow-sm" title="พร้อมใช้งาน"></span>';
+                        excelStatus = 'พร้อมใช้งาน';
                     } else if(item.status === 'borrowed') {
-                        statusBadgeHtml = '<span class="w-4 h-4 rounded-full bg-yellow-400 shadow-sm" title="ถูกยืม"></span>';
+                        let borrowerText = item.borrower_name ? ` (โดย: ${item.borrower_name})` : '';
+                        statusBadgeHtml = `<span class="w-4 h-4 rounded-full bg-yellow-400 shadow-sm" title="ถูกยืม${borrowerText}"></span>`;
+                        excelStatus = 'ถูกยืม' + borrowerText;
                     } else if(item.status === 'maintenance') {
                         statusBadgeHtml = '<span class="w-4 h-4 rounded-full bg-orange-500 shadow-sm" title="ส่งซ่อม"></span>';
+                        excelStatus = 'ส่งซ่อม / บำรุงรักษา';
                     } else if(item.status === 'broken') {
                         statusBadgeHtml = '<span class="w-4 h-4 rounded-full bg-red-500 shadow-sm" title="ชำรุด/พัง"></span>';
+                        excelStatus = 'ชำรุด / พัง';
                     } else {
                         statusBadgeHtml = `<span class="w-4 h-4 rounded-full bg-gray-500 shadow-sm" title="${item.status}"></span>`;
+                        excelStatus = item.status;
                     }
 
                     if (item.remark && item.remark.trim() !== '') {
                         let safeRemark = item.remark.replace(/"/g, '&quot;').replace(/'/g, '&#39;');
                         statusBadgeHtml += `<i class="fa-solid fa-note-sticky text-yellow-500 ml-2 cursor-pointer" title="หมายเหตุ: ${safeRemark}"></i>`;
+                        excelStatus += ` (หมายเหตุ: ${item.remark.trim()})`;
                     }
                     
-                    let statusBadge = `<div class="flex items-center justify-center">${statusBadgeHtml}</div>`;
+                    let statusBadge = `<div class="flex items-center justify-center excel-status-container" data-excel-status="${excelStatus}">${statusBadgeHtml}</div>`;
 
                     let specs = [];
                     if(item.cpu_gen) specs.push(item.cpu_gen);
@@ -426,6 +468,11 @@ function loadEquipments() {
                     // จัดการชื่อยี่ห้อและรุ่น ไม่ให้มีขีด (-) โผล่มาถ้ายี่ห้อว่างเปล่า
                     let brandModelText = [item.brand, item.model].filter(Boolean).join(' ') || '-';
 
+                    let displayType = item.type;
+                    if (item.type === 'Other' && item.sub_type) {
+                        displayType = `อื่นๆ <span class="text-gray-500 text-xs text-nowrap">(${item.sub_type})</span>`;
+                    }
+
                     let tr = document.createElement('tr');
                     tr.className = 'hover-table-row';
                     
@@ -437,13 +484,14 @@ function loadEquipments() {
                     `;
                     
                     if (item.status === 'borrowed') {
-                        statusAction = `<span class="text-xs text-gray-400 italic mr-2">ยืมอยู่</span>`;
+                        let borrowerDisp = item.borrower_name ? ` (โดย: ${item.borrower_name})` : '';
+                        statusAction = `<span class="text-xs text-gray-400 italic mr-2">ยืมอยู่${borrowerDisp}</span>`;
                     }
                     tr.innerHTML = `
                         <td class="py-2 px-3 font-mono text-blue-600 font-medium cursor-pointer hover:underline" onclick="openEqHistoryModal(${item.id}, '${item.barcode}')" title="คลิกดูประวัติการยืม">
                             ${item.barcode} <i class="fa-solid fa-circle-info text-xs text-blue-300 ml-1"></i>
                         </td>
-                        <td class="py-2 px-3">${item.type}</td>
+                        <td class="py-2 px-3">${displayType}</td>
                         <td class="py-2 px-3">${brandModelText}</td>
                         <td class="py-2 px-3 text-xs text-gray-500">${sp_str}</td>
                         <td class="py-2 px-3 text-xs font-mono text-gray-600">${item.serial_number || '-'}</td>
@@ -475,7 +523,11 @@ function loadEquipments() {
                                         if (column === 5) { // Status column
                                             let temp = document.createElement('div');
                                             temp.innerHTML = data;
-                                            return temp.innerText || temp.getAttribute('title') || temp.querySelector('div').getAttribute('title') || 'ไม่ทราบสถานะ';
+                                            let container = temp.querySelector('.excel-status-container');
+                                            if (container && container.hasAttribute('data-excel-status')) {
+                                                return container.getAttribute('data-excel-status');
+                                            }
+                                            return temp.innerText || temp.getAttribute('title') || temp.querySelector('div')?.getAttribute('title') || 'ไม่ทราบสถานะ';
                                         }
                                         return data.replace(/<[^>]*>?/gm, '').replace(/&nbsp;/g, ' ').trim();
                                     }
@@ -488,6 +540,20 @@ function loadEquipments() {
                 // เชื่อมช่องค้นหา Control Panel เข้ากับ DataTables
                 $('#customSearch').off('keyup').on('keyup', function() {
                     dataTable.search(this.value).draw();
+                });
+
+                // เชื่อมตัวกรองหมวดหมู่ Control Panel เข้ากับ DataTables
+                $('#categoryFilter').off('change').on('change', function() {
+                    let type = $(this).val();
+                    if (type === 'Other') {
+                        // ค้นหาคำว่า อื่นๆ เพราะในตารางแสดงเป็น อื่นๆ (เมาส์)
+                        dataTable.column(1).search('อื่นๆ', true, false).draw();
+                    } else if (type === '') {
+                        dataTable.column(1).search('').draw();
+                    } else {
+                        // ค้นหาคำที่ตรงกันเป๊ะๆ (เช่น PC, Notebook)
+                        dataTable.column(1).search('^' + type + '$', true, false).draw();
+                    }
                 });
 
                 // เชื่อมปุ่ม Excel Control Panel เข้ากับ DataTables
@@ -531,6 +597,12 @@ function toggleEqFields() {
     let modelLabel = document.getElementById('modelLabel');
     let brandGrp = document.getElementById('brandGroup');
     let brandLabel = document.getElementById('brandLabel');
+    let subTypeGrp = document.getElementById('subTypeGroup');
+    let subTypeInput = document.getElementById('sub_type_input');
+
+    // Default: ซ่อนหมวดหมู่ย่อย และยกเลิกบังคับกรอก
+    subTypeGrp.classList.add('hidden');
+    subTypeInput.removeAttribute('required');
 
     if (type === 'Monitor') {
         serialGrp.classList.remove('hidden');
@@ -562,8 +634,17 @@ function toggleEqFields() {
         brandGrp.classList.remove('hidden');
         modelGrp.classList.add('hidden');
         brandLabel.innerText = 'ยี่ห้อ (Brand)';
+    } else if (type === 'Other') {
+        serialGrp.classList.remove('hidden');
+        locationGrp.classList.add('hidden');
+        pcGrp.classList.add('hidden');
+        brandGrp.classList.remove('hidden');
+        modelGrp.classList.add('hidden');
+        subTypeGrp.classList.remove('hidden');
+        subTypeInput.setAttribute('required', 'required');
+        brandLabel.innerText = 'ยี่ห้อ (Brand)';
     } else {
-        // Tablet, Other
+        // AIO
         serialGrp.classList.add('hidden');
         locationGrp.classList.add('hidden');
         pcGrp.classList.remove('hidden');
@@ -583,6 +664,12 @@ function toggleEditEqFields() {
     let modelLabel = document.getElementById('editModelLabel');
     let brandGrp = document.getElementById('editBrandGroup');
     let brandLabel = document.getElementById('editBrandLabel');
+    let subTypeGrp = document.getElementById('editSubTypeGroup');
+    let subTypeInput = document.getElementById('edit_sub_type');
+
+    // Default: ซ่อนหมวดหมู่ย่อย และยกเลิกบังคับกรอก
+    subTypeGrp.classList.add('hidden');
+    subTypeInput.removeAttribute('required');
 
     if (type === 'Monitor') {
         serialGrp.classList.remove('hidden');
@@ -614,8 +701,17 @@ function toggleEditEqFields() {
         brandGrp.classList.remove('hidden');
         modelGrp.classList.add('hidden');
         brandLabel.innerText = 'ยี่ห้อ (Brand)';
+    } else if (type === 'Other') {
+        serialGrp.classList.remove('hidden');
+        locationGrp.classList.add('hidden');
+        pcGrp.classList.add('hidden');
+        brandGrp.classList.remove('hidden');
+        modelGrp.classList.add('hidden');
+        subTypeGrp.classList.remove('hidden');
+        subTypeInput.setAttribute('required', 'required');
+        brandLabel.innerText = 'ยี่ห้อ (Brand)';
     } else {
-        // Tablet, Other
+        // AIO
         serialGrp.classList.add('hidden');
         locationGrp.classList.add('hidden');
         pcGrp.classList.remove('hidden');
@@ -702,6 +798,9 @@ function openEditModal(id) {
             document.getElementById('edit_cpu_gen').value = item.cpu_gen || '';
             document.getElementById('edit_ram_gb').value = item.ram_gb || '';
             document.getElementById('edit_os').value = item.os || '';
+            
+            // Sub Type field (if any)
+            document.getElementById('edit_sub_type').value = item.sub_type || '';
             
             // Build Edit Storage Rows
             let editStorageContainer = document.getElementById('editStorageFieldsContainer');

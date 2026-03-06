@@ -49,3 +49,16 @@ INSERT INTO equipments (barcode, serial_number, type, brand, model, cpu_gen, ram
 INSERT INTO employees (emp_code, emp_name, department, position) VALUES
 ('EMP001', 'สมชาย ใจดี', 'IT Support', 'IT Officer'),
 ('EMP002', 'สมหญิง รักงาน', 'HR', 'HR Manager');
+
+-- ตารางผู้ดูแลระบบ (Admin)
+CREATE TABLE IF NOT EXISTS users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(50) UNIQUE NOT NULL COMMENT 'ชื่อผู้ใช้งาน',
+    password VARCHAR(255) NOT NULL COMMENT 'รหัสผ่าน (Hash)',
+    role ENUM('admin', 'user') DEFAULT 'admin' COMMENT 'สิทธิ์การใช้งาน',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- เพิ่มข้อมูลจำลองเล็กน้อยเผื่อไว้ทดสอบ (ปรับแก้ได้) - username: admin, password: password
+-- สำคัญ: password นี้ถูก Hash ด้วย password_hash('password', PASSWORD_DEFAULT)
+INSERT IGNORE INTO users (username, password, role) VALUES ('admin', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'admin');

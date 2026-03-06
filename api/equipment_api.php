@@ -11,7 +11,13 @@ switch ($action) {
     case 'get_all':
         // ดึงข้อมูลอุปกรณ์ทั้งหมด
         try {
-            $stmt = $pdo->query("SELECT * FROM equipments ORDER BY id DESC");
+            $stmt = $pdo->query("SELECT e.*, 
+                                 (SELECT emp.emp_name 
+                                  FROM borrowings b 
+                                  JOIN employees emp ON b.employee_id = emp.id 
+                                  WHERE b.equipment_id = e.id AND b.status = 'active' 
+                                  ORDER BY b.id DESC LIMIT 1) AS borrower_name
+                                 FROM equipments e ORDER BY e.id DESC");
             $equipments = $stmt->fetchAll();
             responseJson('success', 'Data retrieved', $equipments);
         }
@@ -68,13 +74,14 @@ switch ($action) {
             }
             $storageJson = !empty($storageData) ? json_encode($storageData) : null;
 
-            $sql = "INSERT INTO equipments (barcode, serial_number, type, brand, model, cpu_gen, ram_gb, storage_json, os, location, status, remark) 
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            $sql = "INSERT INTO equipments (barcode, serial_number, type, sub_type, brand, model, cpu_gen, ram_gb, storage_json, os, location, status, remark) 
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             $stmt = $pdo->prepare($sql);
             $stmt->execute([
                 $barcode,
                 $_POST['serial_number'] ?? null,
                 $type,
+                ($type === 'Other') ? ($_POST['sub_type'] ?? null) : null,
                 $_POST['brand'] ?? null,
                 $_POST['model'] ?? null,
                 $_POST['cpu_gen'] ?? null,
@@ -151,7 +158,7 @@ switch ($action) {
             $storageJson = !empty($storageData) ? json_encode($storageData) : null;
 
             $sql = "UPDATE equipments SET 
-                    barcode=?, serial_number=?, type=?, brand=?, model=?, 
+                    barcode=?, serial_number=?, type=?, sub_type=?, brand=?, model=?, 
                     cpu_gen=?, ram_gb=?, storage_json=?, os=?, location=?, status=?, remark=?
                     WHERE id=?";
             $stmt = $pdo->prepare($sql);
@@ -159,6 +166,7 @@ switch ($action) {
                 $barcode,
                 $_POST['serial_number'] ?? null,
                 $type,
+                ($type === 'Other') ? ($_POST['sub_type'] ?? null) : null,
                 $_POST['brand'] ?? null,
                 $_POST['model'] ?? null,
                 $_POST['cpu_gen'] ?? null,
